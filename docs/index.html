@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ORVR - On Road Vehicle Repair Service</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700" rel="stylesheet">
+    <!-- Styles -->
+    <link href="css/app.css" rel="stylesheet">
+    <!-- Custom styling to ensure it works beautifully -->
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #343a40;
+            color: #fff;
+        }
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('3.jpg') no-repeat center center/cover;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .demo-badge {
+            background-color: #ffc107;
+            color: #212529;
+            font-weight: bold;
+            border-radius: 20px;
+            padding: 5px 15px;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .portal-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+        }
+        .portal-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #007bff;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm py-3">
+            <div class="container" style="font-size: 18px;">
+                <a class="navbar-brand text-primary" style="font-size: 28px;" href="index.html">ORVR</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="about.html">About Us</a>
+                        </li>
+                    </ul>
+                    
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Login
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="loginDropdown">
+                                <a class="dropdown-item" href="login.html?role=customer">Customer Login</a>
+                                <a class="dropdown-item" href="login.html?role=mechanic">Mechanic Login</a>
+                                <a class="dropdown-item" href="login.html?role=admin">Admin Login</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Register
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="registerDropdown">
+                                <a class="dropdown-item" href="register.html?role=customer">Customer Register</a>
+                                <a class="dropdown-item" href="register.html?role=mechanic">Mechanic Register</a>
+                                <a class="dropdown-item" href="register.html?role=admin">Admin Register</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <header class="hero-section">
+            <div class="container">
+                <div class="demo-badge">
+                    ⚡ GitHub Pages Interactive Demo
+                </div>
+                <h1 class="display-3 font-weight-bold mb-4" style="color: #fff; text-shadow: 2px 2px 8px rgba(0,0,0,0.5);">
+                    ON ROAD VEHICLE REPAIR SERVICE
+                </h1>
+                <p class="lead mb-5 text-light" style="max-width: 800px; margin: 0 auto; font-size: 1.25rem; text-shadow: 1px 1px 4px rgba(0,0,0,0.5);">
+                    Stranded on the road? Find professional mechanics in your vicinity and request assistance instantly. 
+                </p>
+                <div class="d-flex justify-content-center flex-wrap">
+                    <a href="about.html" class="btn btn-outline-light btn-lg px-4 mx-2 my-2">Learn More</a>
+                    <a href="login.html?role=customer" class="btn btn-primary btn-lg px-4 mx-2 my-2">Find Help Now</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Portals Showcase -->
+        <section class="py-5 bg-dark">
+            <div class="container py-4">
+                <h2 class="text-center font-weight-bold mb-5">Explore System Portals</h2>
+                <div class="row">
+                    <!-- Customer Portal -->
+                    <div class="col-md-4 mb-4">
+                        <div class="portal-card text-center" onclick="window.location.href='login.html?role=customer'">
+                            <div class="display-4 text-primary mb-3">👤</div>
+                            <h3>Customer Portal</h3>
+                            <p class="text-muted">Register as a customer, search for roadside mechanics by location or category, and request instant repair service.</p>
+                            <span class="btn btn-outline-primary btn-sm mt-2">Enter Portal</span>
+                        </div>
+                    </div>
+                    <!-- Mechanic Portal -->
+                    <div class="col-md-4 mb-4">
+                        <div class="portal-card text-center" onclick="window.location.href='login.html?role=mechanic'">
+                            <div class="display-4 text-success mb-3">🔧</div>
+                            <h3>Mechanic Portal</h3>
+                            <p class="text-muted">Register as a mechanic, update your location, list your repair specialties, and accept service requests in real-time.</p>
+                            <span class="btn btn-outline-success btn-sm mt-2">Enter Portal</span>
+                        </div>
+                    </div>
+                    <!-- Admin Portal -->
+                    <div class="col-md-4 mb-4">
+                        <div class="portal-card text-center" onclick="window.location.href='login.html?role=admin'">
+                            <div class="display-4 text-warning mb-3">🛡️</div>
+                            <h3>Admin Portal</h3>
+                            <p class="text-muted">Control center to manage registered customers, approve mechanics, track service records, and moderate feedback.</p>
+                            <span class="btn btn-outline-warning btn-sm mt-2">Enter Portal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-secondary py-4 text-center text-light">
+            <div class="container">
+                <p class="mb-0">&copy; 2026 ORVR On-Road Vehicle Breakdown Assistance Finder Web System. Developed by Vijay Mahes.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts needed for Bootstrap dropdowns to work dynamically -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mechanic Dashboard - ORVR</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700" rel="stylesheet">
+    <!-- Styles -->
+    <link href="css/app.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .dashboard-header {
+            background-color: #28a745;
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        .request-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background-color: #fff;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #fdfdfd;
+            margin-bottom: 15px;
+        }
+        .message-bubble {
+            margin-bottom: 10px;
+            padding: 10px 14px;
+            border-radius: 15px;
+            max-width: 75%;
+            font-size: 14px;
+        }
+        .message-bubble.sent {
+            background-color: #28a745;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+        .message-bubble.received {
+            background-color: #e9ecef;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm py-3">
+        <div class="container" style="font-size: 18px;">
+            <a class="navbar-brand text-primary" style="font-size: 28px;" href="index.html">ORVR</a>
+            <div class="collapse navbar-collapse id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About Us</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-light font-weight-bold" href="#" id="mechanicMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            🔧 Mechanic Mode
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="mechanicMenu">
+                            <a class="dropdown-item" href="login.html?role=mechanic">Log Out</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <h1 class="font-weight-bold">Mechanic Workstation</h1>
+            <p class="lead mb-0 text-light">Accept motorist requests, coordinate solutions and view feedback.</p>
+        </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="container mb-5">
+        <div class="row">
+            <!-- Incoming Requests -->
+            <div class="col-md-8">
+                <h3 class="font-weight-bold mb-4">Incoming Customer Requests</h3>
+                <div id="requestsList">
+                    <!-- Cards will be populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Side column with Active Chat -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-lg p-4 d-none" id="chatSection">
+                    <h4 class="font-weight-bold mb-2">Chat with Motorist</h4>
+                    <div class="chat-box" id="chatBox">
+                        <!-- Messages go here -->
+                    </div>
+                    <form onsubmit="sendChatMessage(event)">
+                        <div class="input-group">
+                            <input type="text" id="chatInput" class="form-control" placeholder="Type your reply..." required>
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-success">Send</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card border-0 shadow-sm rounded-lg p-4 mt-4">
+                    <h4 class="font-weight-bold mb-3">Workstation Summary</h4>
+                    <p class="mb-1">📋 <b>Pending Jobs:</b> <span id="pendingCount">0</span></p>
+                    <p class="mb-1">✅ <b>Completed Jobs:</b> <span id="completedCount">0</span></p>
+                    <p class="mb-0">⭐ <b>Rating:</b> <span class="badge badge-warning">4.8</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mechanic id for session is simulated as 2 ("Nimal Perera")
+        const currentMechanicId = 2;
+
+        function getRequests() {
+            return JSON.parse(localStorage.getItem('orvr_requests')) || [];
+        }
+
+        function saveRequests(reqs) {
+            localStorage.setItem('orvr_requests', JSON.stringify(reqs));
+            renderRequests();
+        }
+
+        function renderRequests() {
+            const reqs = getRequests().filter(r => r.mechanicId === currentMechanicId);
+            const container = document.getElementById('requestsList');
+            container.innerHTML = '';
+
+            let pending = 0;
+            let completed = 0;
+
+            if (reqs.length === 0) {
+                container.innerHTML = '<div class="card p-5 text-center"><p class="text-muted mb-0">No requests received yet.</p></div>';
+                document.getElementById('pendingCount').innerText = 0;
+                document.getElementById('completedCount').innerText = 0;
+                return;
+            }
+
+            reqs.forEach(r => {
+                let actionHtml = '';
+                
+                if (r.status === 'requested') {
+                    pending++;
+                    actionHtml = `
+                        <div class="mt-3">
+                            <button class="btn btn-success font-weight-bold" onclick="acceptRequest(${r.id})">Accept Request</button>
+                            <button class="btn btn-outline-danger font-weight-bold ml-2" onclick="rejectRequest(${r.id})">Decline</button>
+                        </div>
+                    `;
+                } else if (r.status === 'accepted') {
+                    pending++;
+                    actionHtml = `
+                        <div class="mt-3">
+                            <span class="badge badge-success px-3 py-2 font-weight-bold text-uppercase">Active Job</span>
+                            <button class="btn btn-primary font-weight-bold ml-2" onclick="openChat(${r.id})">Message Customer</button>
+                        </div>
+                    `;
+                } else if (r.status === 'completed') {
+                    completed++;
+                    actionHtml = `
+                        <div class="mt-3">
+                            <span class="badge badge-secondary px-3 py-2 font-weight-bold text-uppercase">Completed</span>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML += `
+                    <div class="card request-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="font-weight-bold mb-0">🚗 Roadside Assistance Call</h4>
+                            <small class="text-muted">${r.timestamp}</small>
+                        </div>
+                        <p class="text-muted mb-2">Request ID: #${r.id}</p>
+                        <div class="border-top pt-2">
+                            <p class="mb-1">👤 <b>Client:</b> Registered Customer</p>
+                            <p class="mb-1">📍 <b>Reported Location:</b> Matches Kandy Area</p>
+                            <p class="mb-1">⚙️ <b>Service Required:</b> Dual Clutch Repairs</p>
+                        </div>
+                        ${actionHtml}
+                    </div>
+                `;
+            });
+
+            document.getElementById('pendingCount').innerText = pending;
+            document.getElementById('completedCount').innerText = completed;
+        }
+
+        function acceptRequest(id) {
+            let reqs = getRequests();
+            reqs = reqs.map(r => {
+                if (r.id === id) {
+                    r.status = 'accepted';
+                }
+                return r;
+            });
+            saveRequests(reqs);
+            alert("You have accepted the request. You can now chat with the client.");
+        }
+
+        function rejectRequest(id) {
+            let reqs = getRequests();
+            reqs = reqs.filter(r => r.id !== id);
+            saveRequests(reqs);
+        }
+
+        // Chat Logic
+        let activeChatReqId = null;
+
+        function openChat(reqId) {
+            activeChatReqId = reqId;
+            document.getElementById('chatSection').classList.remove('d-none');
+            renderMessages();
+        }
+
+        function getChats() {
+            return JSON.parse(localStorage.getItem('orvr_chats')) || {};
+        }
+
+        function renderMessages() {
+            if (!activeChatReqId) return;
+            const chats = getChats();
+            const msgList = chats[currentMechanicId] || []; // Linked by mechanic ID
+
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML = '';
+
+            if (msgList.length === 0) {
+                chatBox.innerHTML = '<p class="text-muted text-center py-5">Send a message to update the motorist.</p>';
+            } else {
+                msgList.forEach(m => {
+                    const bubbleClass = m.sender === 'mechanic' ? 'sent' : 'received';
+                    chatBox.innerHTML += `
+                        <div class="message-bubble ${bubbleClass}">
+                            ${m.text}
+                        </div>
+                    `;
+                });
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function sendChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const chats = getChats();
+            if (!chats[currentMechanicId]) chats[currentMechanicId] = [];
+
+            chats[currentMechanicId].push({
+                sender: 'mechanic',
+                text: text,
+                time: new Date().toLocaleTimeString()
+            });
+
+            localStorage.setItem('orvr_chats', JSON.stringify(chats));
+            input.value = '';
+            renderMessages();
+        }
+
+        // Init
+        renderRequests();
+        window.addEventListener('storage', () => {
+            renderRequests();
+            renderMessages();
+        });
+    </script>
+</body>
+</html>

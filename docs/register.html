@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register - ORVR</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700" rel="stylesheet">
+    <!-- Styles -->
+    <link href="css/app.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #343a40;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .register-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('45.jpg') no-repeat center center/cover;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 40px 0;
+        }
+        .card {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        .nav-tabs {
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .nav-tabs .nav-link {
+            color: #ccc;
+            border: none;
+            background: transparent;
+            font-size: 18px;
+            padding: 10px 20px;
+        }
+        .nav-tabs .nav-link.active {
+            color: #007bff;
+            background: transparent;
+            border-bottom: 3px solid #007bff;
+            font-weight: bold;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm py-3">
+        <div class="container" style="font-size: 18px;">
+            <a class="navbar-brand text-primary" style="font-size: 28px;" href="index.html">ORVR</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About Us</a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="loginDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Login
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="loginDropdown">
+                            <a class="dropdown-item" href="login.html?role=customer">Customer Login</a>
+                            <a class="dropdown-item" href="login.html?role=mechanic">Mechanic Login</a>
+                            <a class="dropdown-item" href="login.html?role=admin">Admin Login</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown active">
+                        <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Register
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="registerDropdown">
+                            <a class="dropdown-item" href="register.html?role=customer">Customer Register</a>
+                            <a class="dropdown-item" href="register.html?role=mechanic">Mechanic Register</a>
+                            <a class="dropdown-item" href="register.html?role=admin">Admin Register</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content (Register Card) -->
+    <div class="register-bg">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-7">
+                    <div class="card bg-dark text-white rounded-lg p-4">
+                        <div class="card-header border-0 bg-transparent text-center pb-0">
+                            <h2 id="registerTitle" class="font-weight-bold">Create Account</h2>
+                            
+                            <!-- Role Switcher Tabs -->
+                            <ul class="nav nav-tabs justify-content-center mt-3" id="roleTabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="customer-tab" data-toggle="tab" href="#customer" role="tab" onclick="setRole('customer')">👤 Customer</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="mechanic-tab" data-toggle="tab" href="#mechanic" role="tab" onclick="setRole('mechanic')">🔧 Mechanic</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="admin-tab" data-toggle="tab" href="#admin" role="tab" onclick="setRole('admin')">🛡️ Admin</a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="card-body pt-4">
+                            <form id="registerForm" onsubmit="handleRegister(event)">
+                                <div class="form-group row">
+                                    <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
+                                    <div class="col-md-8">
+                                        <input type="text" id="name" class="form-control bg-secondary text-white border-0" placeholder="Enter Full Name" required autofocus>
+                                    </div>
+                                </div>
+                               
+                                <div class="form-group row">
+                                    <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail Address</label>
+                                    <div class="col-md-8">
+                                        <input type="email" id="email" class="form-control bg-secondary text-white border-0" placeholder="Enter E-Mail" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="phone" class="col-md-4 col-form-label text-md-right">Phone Number</label>
+                                    <div class="col-md-8">
+                                        <input type="tel" id="phone" class="form-control bg-secondary text-white border-0" placeholder="Enter Contact Number" required>
+                                    </div>
+                                </div>
+
+                                <!-- Mechanic Specific Fields -->
+                                <div id="mechanicFields" style="display: none;">
+                                    <div class="form-group row">
+                                        <label for="specialty" class="col-md-4 col-form-label text-md-right">Specialty</label>
+                                        <div class="col-md-8">
+                                            <select id="specialty" class="form-control bg-secondary text-white border-0">
+                                                <option value="General Mechanical Repairs">General Mechanical Repairs</option>
+                                                <option value="ABS Repairs">ABS Repairs</option>
+                                                <option value="Dual Clutch Repairs">Dual Clutch Repairs</option>
+                                                <option value="Tyre & Wheel Service">Tyre & Wheel Service</option>
+                                                <option value="Electrical Repairs">Electrical Repairs</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="location" class="col-md-4 col-form-label text-md-right">Primary Location</label>
+                                        <div class="col-md-8">
+                                            <input type="text" id="location" class="form-control bg-secondary text-white border-0" placeholder="City or Service Zone">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
+                                    <div class="col-md-8">
+                                        <input type="password" id="password" class="form-control bg-secondary text-white border-0" placeholder="Enter Secure Password" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="password_confirmation" class="col-md-4 col-form-label text-md-right">Confirm Password</label>
+                                    <div class="col-md-8">
+                                        <input type="password" id="password_confirmation" class="form-control bg-secondary text-white border-0" placeholder="Confirm Password" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group mb-0 text-center">
+                                    <button type="submit" class="btn btn-primary btn-block btn-lg font-weight-bold shadow">
+                                        Register
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-secondary py-4 text-center text-light mt-auto">
+        <div class="container">
+            <p class="mb-0">&copy; 2026 ORVR On-Road Vehicle Breakdown Assistance Finder Web System. Developed by Vijay Mahes.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentRole = 'customer';
+
+        function getParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function setRole(role) {
+            currentRole = role;
+            document.getElementById('registerTitle').innerText = role.charAt(0).toUpperCase() + role.slice(1) + ' Registration';
+            
+            // Show/Hide mechanic fields
+            const mechanicFields = document.getElementById('mechanicFields');
+            if (role === 'mechanic') {
+                mechanicFields.style.display = 'block';
+                document.getElementById('location').setAttribute('required', 'required');
+            } else {
+                mechanicFields.style.display = 'none';
+                document.getElementById('location').removeAttribute('required');
+            }
+        }
+
+        // Initialize based on URL parameter
+        window.addEventListener('DOMContentLoaded', () => {
+            const role = getParam('role');
+            if (role && ['customer', 'mechanic', 'admin'].includes(role)) {
+                // Activate the corresponding tab
+                $('.nav-tabs a[href="#' + role + '"]').tab('show');
+                setRole(role);
+            } else {
+                setRole('customer');
+            }
+        });
+
+        function handleRegister(e) {
+            e.preventDefault();
+            alert('Registration simulation successful! Welcome to ORVR.');
+            // Simulate redirection based on role
+            if (currentRole === 'customer') {
+                window.location.href = 'dashboard-customer.html';
+            } else if (currentRole === 'mechanic') {
+                window.location.href = 'dashboard-mechanic.html';
+            } else if (currentRole === 'admin') {
+                window.location.href = 'dashboard-admin.html';
+            }
+        }
+    </script>
+</body>
+</html>

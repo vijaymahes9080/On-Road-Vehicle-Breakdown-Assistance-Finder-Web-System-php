@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard - ORVR</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700" rel="stylesheet">
+    <!-- Styles -->
+    <link href="css/app.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .dashboard-header {
+            background-color: #343a40;
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background-color: #fff;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        .card-title-sub {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm py-3">
+        <div class="container" style="font-size: 18px;">
+            <a class="navbar-brand text-primary" style="font-size: 28px;" href="index.html">ORVR</a>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About Us</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-light font-weight-bold" href="#" id="adminMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            🛡️ Admin Mode
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="adminMenu">
+                            <a class="dropdown-item" href="login.html?role=admin">Log Out</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="dashboard-header bg-dark">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h1 class="font-weight-bold mb-1">Admin Control Panel</h1>
+                    <p class="lead mb-0 text-muted">Platform moderate control, records and metrics analytics.</p>
+                </div>
+                <div class="badge badge-warning px-3 py-2 font-weight-bold" style="font-size: 14px;">Demo Administrator Active</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container mb-5">
+        <!-- Stats Row -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="card-title-sub">Registered Customers</div>
+                    <div class="stat-value text-primary" id="customerCount">4</div>
+                    <div class="text-muted"><small>Active motorists on system</small></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="card-title-sub">Verified Mechanics</div>
+                    <div class="stat-value text-success" id="mechanicCount">4</div>
+                    <div class="text-muted"><small>Service providers on duty</small></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="card-title-sub">Breakdown Actions</div>
+                    <div class="stat-value text-warning" id="requestCount">0</div>
+                    <div class="text-muted"><small>Requests logged in system</small></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <!-- Left: Mechanics Moderation -->
+            <div class="col-lg-6 mb-4">
+                <div class="card border-0 shadow-sm rounded-lg p-4 h-100">
+                    <h3 class="font-weight-bold mb-4">Manage Mechanics</h3>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Specialty</th>
+                                    <th>Zone</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminMechanicTable">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Customers Moderation -->
+            <div class="col-lg-6 mb-4">
+                <div class="card border-0 shadow-sm rounded-lg p-4 h-100">
+                    <h3 class="font-weight-bold mb-4">Manage Customers</h3>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Contact</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminCustomerTable">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Logs / Request Logs -->
+        <div class="row mt-2">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-lg p-4">
+                    <h3 class="font-weight-bold mb-4">Real-Time Request Activity Logs</h3>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Log ID</th>
+                                    <th>Provider</th>
+                                    <th>Action Status</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminLogsTable">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Demo customer database inside localStorage if not present
+        const defaultCustomers = [
+            { id: 101, name: "Alexander Perera", email: "alex@example.com", phone: "0719876543" },
+            { id: 102, name: "Malith Jayasinghe", email: "malith@example.com", phone: "0721234567" },
+            { id: 103, name: "Senuri Silva", email: "senuri@example.com", phone: "0763456789" },
+            { id: 104, name: "Vijay Mahes", email: "vijaymahes9080@gmail.com", phone: "0771122334" }
+        ];
+
+        if (!localStorage.getItem('orvr_customers')) {
+            localStorage.setItem('orvr_customers', JSON.stringify(defaultCustomers));
+        }
+
+        function getCustomers() {
+            return JSON.parse(localStorage.getItem('orvr_customers')) || [];
+        }
+
+        function getMechanics() {
+            return JSON.parse(localStorage.getItem('orvr_mechanics')) || [];
+        }
+
+        function getRequests() {
+            return JSON.parse(localStorage.getItem('orvr_requests')) || [];
+        }
+
+        function renderAdminDashboard() {
+            const customers = getCustomers();
+            const mechanics = getMechanics();
+            const requests = getRequests();
+
+            // Render stats
+            document.getElementById('customerCount').innerText = customers.length;
+            document.getElementById('mechanicCount').innerText = mechanics.length;
+            document.getElementById('requestCount').innerText = requests.length;
+
+            // Render Mechanics Table
+            const mecTable = document.getElementById('adminMechanicTable');
+            mecTable.innerHTML = '';
+            mechanics.forEach(m => {
+                mecTable.innerHTML += `
+                    <tr>
+                        <td><b>${m.name}</b></td>
+                        <td><small>${m.specialty}</small></td>
+                        <td>${m.location}</td>
+                        <td>
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteMechanic(${m.id})">Remove</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Render Customers Table
+            const cusTable = document.getElementById('adminCustomerTable');
+            cusTable.innerHTML = '';
+            customers.forEach(c => {
+                cusTable.innerHTML += `
+                    <tr>
+                        <td><b>${c.name}</b></td>
+                        <td>${c.email}</td>
+                        <td>${c.phone}</td>
+                        <td>
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteCustomer(${c.id})">Remove</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Render Logs Table
+            const logsTable = document.getElementById('adminLogsTable');
+            logsTable.innerHTML = '';
+            if (requests.length === 0) {
+                logsTable.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No request activities registered in database log.</td></tr>`;
+            } else {
+                requests.forEach(r => {
+                    let badgeClass = 'badge-secondary';
+                    if (r.status === 'requested') badgeClass = 'badge-warning text-white';
+                    if (r.status === 'accepted') badgeClass = 'badge-success';
+                    if (r.status === 'completed') badgeClass = 'badge-info';
+
+                    logsTable.innerHTML += `
+                        <tr>
+                            <td>#${r.id}</td>
+                            <td>${r.mechanicName}</td>
+                            <td><span class="badge ${badgeClass}">${r.status.toUpperCase()}</span></td>
+                            <td>${r.timestamp}</td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        function deleteMechanic(id) {
+            if (confirm("Are you sure you want to remove this mechanic from the platform directory?")) {
+                let mecs = getMechanics();
+                mecs = mecs.filter(m => m.id !== id);
+                localStorage.setItem('orvr_mechanics', JSON.stringify(mecs));
+                renderAdminDashboard();
+            }
+        }
+
+        function deleteCustomer(id) {
+            if (confirm("Are you sure you want to suspend this customer profile?")) {
+                let cuses = getCustomers();
+                cuses = cuses.filter(c => c.id !== id);
+                localStorage.setItem('orvr_customers', JSON.stringify(cuses));
+                renderAdminDashboard();
+            }
+        }
+
+        // Init
+        renderAdminDashboard();
+        window.addEventListener('storage', () => {
+            renderAdminDashboard();
+        });
+    </script>
+</body>
+</html>

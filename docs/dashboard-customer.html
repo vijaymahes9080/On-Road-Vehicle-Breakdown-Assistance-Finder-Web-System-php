@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Customer Dashboard - ORVR</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700" rel="stylesheet">
+    <!-- Styles -->
+    <link href="css/app.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .dashboard-header {
+            background-color: #343a40;
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        .mechanic-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            background-color: #fff;
+            margin-bottom: 20px;
+        }
+        .mechanic-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .avatar-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 15px auto;
+        }
+        .badge-rating {
+            background-color: #ffc107;
+            color: #212529;
+            font-weight: bold;
+        }
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #fdfdfd;
+            margin-bottom: 15px;
+        }
+        .message-bubble {
+            margin-bottom: 10px;
+            padding: 10px 14px;
+            border-radius: 15px;
+            max-width: 75%;
+            font-size: 14px;
+        }
+        .message-bubble.sent {
+            background-color: #007bff;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+        .message-bubble.received {
+            background-color: #e9ecef;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm py-3">
+        <div class="container" style="font-size: 18px;">
+            <a class="navbar-brand text-primary" style="font-size: 28px;" href="index.html">ORVR</a>
+            <div class="collapse navbar-collapse id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About Us</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-light font-weight-bold" href="#" id="userMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            👤 Customer Mode
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
+                            <a class="dropdown-item" href="login.html?role=customer">Log Out</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="container">
+            <h1 class="font-weight-bold">Find Breakdown Assistance</h1>
+            <p class="lead mb-0 text-light">Search and request certified mechanics nearby in real time.</p>
+        </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="container mb-5">
+        <!-- Search and Filters -->
+        <div class="card p-4 border-0 shadow-sm rounded-lg mb-4">
+            <div class="row">
+                <div class="col-md-5 mb-2">
+                    <label class="font-weight-bold">Breakdown Location</label>
+                    <input type="text" id="searchLocation" class="form-control" placeholder="E.g., Colombo, Kandy, Galle..." oninput="filterMechanics()">
+                </div>
+                <div class="col-md-5 mb-2">
+                    <label class="font-weight-bold">Required Repair Service</label>
+                    <select id="searchSpecialty" class="form-control" onchange="filterMechanics()">
+                        <option value="">All Services</option>
+                        <option value="General Mechanical Repairs">General Mechanical Repairs</option>
+                        <option value="ABS Repairs">ABS Repairs</option>
+                        <option value="Dual Clutch Repairs">Dual Clutch Repairs</option>
+                        <option value="Tyre & Wheel Service">Tyre & Wheel Service</option>
+                        <option value="Electrical Repairs">Electrical Repairs</option>
+                    </select>
+                </div>
+                <div class="col-md-2 mb-2 d-flex align-items-end">
+                    <button class="btn btn-primary btn-block" onclick="resetFilters()">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Mechanics List -->
+            <div class="col-md-8">
+                <h3 class="font-weight-bold mb-4">Available Service Providers</h3>
+                <div id="mechanicsList" class="row">
+                    <!-- Cards will be populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Side column with Active Requests & Messages -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-lg p-4 mb-4">
+                    <h4 class="font-weight-bold mb-3">My Request Log</h4>
+                    <div id="activeRequestsList">
+                        <p class="text-muted">No active requests sent yet.</p>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm rounded-lg p-4 d-none" id="chatSection">
+                    <h4 class="font-weight-bold mb-2">Chat with <span id="chatMechanicName">Mechanic</span></h4>
+                    <div class="chat-box" id="chatBox">
+                        <!-- Messages go here -->
+                    </div>
+                    <form onsubmit="sendChatMessage(event)">
+                        <div class="input-group">
+                            <input type="text" id="chatInput" class="form-control" placeholder="Type a message..." required>
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">Send</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-bold">Leave Feedback</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="feedbackForm" onsubmit="submitFeedback(event)">
+                        <input type="hidden" id="feedbackMecId">
+                        <div class="form-group">
+                            <label class="font-weight-bold">Rating</label>
+                            <select id="feedbackRating" class="form-control">
+                                <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+                                <option value="4">⭐⭐⭐⭐ (Good)</option>
+                                <option value="3">⭐⭐⭐ (Average)</option>
+                                <option value="2">⭐⭐ (Poor)</option>
+                                <option value="1">⭐ (Very Bad)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="font-weight-bold">Comments</label>
+                            <textarea id="feedbackComment" class="form-control" rows="3" placeholder="Tell us about the service..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Submit Feedback</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Default Mechanics database
+        const defaultMechanics = [
+            { id: 1, name: "Kamal Silva", specialty: "ABS Repairs", location: "Colombo", phone: "0771234567", rating: 4.5, avatar: "👨‍🔧" },
+            { id: 2, name: "Nimal Perera", specialty: "Dual Clutch Repairs", location: "Kandy", phone: "0777654321", rating: 4.8, avatar: "👨‍🔧" },
+            { id: 3, name: "Aruna Fernando", specialty: "Tyre & Wheel Service", location: "Galle", phone: "0711122334", rating: 4.2, avatar: "🔧" },
+            { id: 4, name: "John Doe", specialty: "General Mechanical Repairs", location: "Colombo", phone: "0722233445", rating: 4.0, avatar: "🛠️" }
+        ];
+
+        // Load or initialize state
+        if (!localStorage.getItem('orvr_mechanics')) {
+            localStorage.setItem('orvr_mechanics', JSON.stringify(defaultMechanics));
+        }
+        if (!localStorage.getItem('orvr_requests')) {
+            localStorage.setItem('orvr_requests', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('orvr_chats')) {
+            localStorage.setItem('orvr_chats', JSON.stringify({}));
+        }
+
+        let activeChatMecId = null;
+
+        function getMechanics() {
+            return JSON.parse(localStorage.getItem('orvr_mechanics'));
+        }
+
+        function getRequests() {
+            return JSON.parse(localStorage.getItem('orvr_requests'));
+        }
+
+        function saveRequests(reqs) {
+            localStorage.setItem('orvr_requests', JSON.stringify(reqs));
+            renderRequests();
+            filterMechanics();
+        }
+
+        function renderMechanics(list) {
+            const container = document.getElementById('mechanicsList');
+            container.innerHTML = '';
+            
+            if (list.length === 0) {
+                container.innerHTML = '<div class="col-12"><p class="text-muted text-center py-4">No mechanics match your criteria.</p></div>';
+                return;
+            }
+
+            const requests = getRequests();
+
+            list.forEach(mec => {
+                const req = requests.find(r => r.mechanicId === mec.id);
+                let buttonHtml = '';
+                
+                if (!req) {
+                    buttonHtml = `<button class="btn btn-primary btn-block font-weight-bold" onclick="requestMechanic(${mec.id})">Request Assistance</button>`;
+                } else if (req.status === 'requested') {
+                    buttonHtml = `<button class="btn btn-warning btn-block font-weight-bold text-white" onclick="cancelRequest(${mec.id})">Requested (Cancel)</button>`;
+                } else if (req.status === 'accepted') {
+                    buttonHtml = `
+                        <div class="row no-gutters">
+                            <div class="col-6 pr-1">
+                                <button class="btn btn-success btn-block font-weight-bold btn-sm" onclick="openChat(${mec.id})">Message</button>
+                            </div>
+                            <div class="col-6 pl-1">
+                                <button class="btn btn-outline-success btn-block font-weight-bold btn-sm" onclick="openFeedbackModal(${mec.id})">Complete</button>
+                            </div>
+                        </div>`;
+                } else if (req.status === 'completed') {
+                    buttonHtml = `<button class="btn btn-secondary btn-block font-weight-bold" disabled>Completed</button>`;
+                }
+
+                container.innerHTML += `
+                    <div class="col-md-6 mb-4">
+                        <div class="card mechanic-card p-3">
+                            <div class="avatar-box">${mec.avatar}</div>
+                            <h4 class="text-center font-weight-bold mb-1">${mec.name}</h4>
+                            <p class="text-center text-muted mb-2">${mec.specialty}</p>
+                            <hr class="my-2">
+                            <p class="mb-1">📍 <b>Location:</b> ${mec.location}</p>
+                            <p class="mb-1">📞 <b>Contact:</b> ${mec.phone}</p>
+                            <p class="mb-3">⭐ <b>Rating:</b> <span class="badge badge-rating">${mec.rating}</span></p>
+                            ${buttonHtml}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterMechanics() {
+            const loc = document.getElementById('searchLocation').value.toLowerCase().trim();
+            const spec = document.getElementById('searchSpecialty').value;
+            const mechanics = getMechanics();
+
+            const filtered = mechanics.filter(m => {
+                const locMatch = !loc || m.location.toLowerCase().includes(loc);
+                const specMatch = !spec || m.specialty === spec;
+                return locMatch && specMatch;
+            });
+
+            renderMechanics(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('searchLocation').value = '';
+            document.getElementById('searchSpecialty').value = '';
+            filterMechanics();
+        }
+
+        function requestMechanic(id) {
+            const reqs = getRequests();
+            const mec = getMechanics().find(m => m.id === id);
+            
+            reqs.push({
+                id: Date.now(),
+                mechanicId: id,
+                mechanicName: mec.name,
+                status: 'requested',
+                timestamp: new Date().toLocaleTimeString()
+            });
+
+            saveRequests(reqs);
+            alert(`Service request sent to ${mec.name}!`);
+        }
+
+        function cancelRequest(id) {
+            let reqs = getRequests();
+            reqs = reqs.filter(r => r.mechanicId !== id);
+            saveRequests(reqs);
+            
+            if (activeChatMecId === id) {
+                document.getElementById('chatSection').classList.add('d-none');
+            }
+        }
+
+        function renderRequests() {
+            const requests = getRequests();
+            const container = document.getElementById('activeRequestsList');
+            container.innerHTML = '';
+
+            if (requests.length === 0) {
+                container.innerHTML = '<p class="text-muted">No active requests sent yet.</p>';
+                return;
+            }
+
+            requests.forEach(r => {
+                let badgeClass = 'badge-secondary';
+                if (r.status === 'requested') badgeClass = 'badge-warning text-white';
+                if (r.status === 'accepted') badgeClass = 'badge-success';
+                if (r.status === 'completed') badgeClass = 'badge-info';
+
+                container.innerHTML += `
+                    <div class="border-bottom pb-2 mb-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <b>${r.mechanicName}</b>
+                            <span class="badge ${badgeClass}">${r.status.toUpperCase()}</span>
+                        </div>
+                        <small class="text-muted">Sent at ${r.timestamp}</small>
+                    </div>
+                `;
+            });
+        }
+
+        // Chat systems
+        function openChat(mecId) {
+            activeChatMecId = mecId;
+            const mec = getMechanics().find(m => m.id === mecId);
+            document.getElementById('chatMechanicName').innerText = mec.name;
+            document.getElementById('chatSection').classList.remove('d-none');
+            renderMessages();
+        }
+
+        function getChats() {
+            return JSON.parse(localStorage.getItem('orvr_chats'));
+        }
+
+        function renderMessages() {
+            if (!activeChatMecId) return;
+            const chats = getChats();
+            const msgList = chats[activeChatMecId] || [];
+            
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML = '';
+            
+            if (msgList.length === 0) {
+                chatBox.innerHTML = '<p class="text-muted text-center py-5">Start chatting with the mechanic.</p>';
+            } else {
+                msgList.forEach(m => {
+                    const bubbleClass = m.sender === 'customer' ? 'sent' : 'received';
+                    chatBox.innerHTML += `
+                        <div class="message-bubble ${bubbleClass}">
+                            ${m.text}
+                        </div>
+                    `;
+                });
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function sendChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text || !activeChatMecId) return;
+
+            const chats = getChats();
+            if (!chats[activeChatMecId]) chats[activeChatMecId] = [];
+
+            chats[activeChatMecId].push({
+                sender: 'customer',
+                text: text,
+                time: new Date().toLocaleTimeString()
+            });
+
+            localStorage.setItem('orvr_chats', JSON.stringify(chats));
+            input.value = '';
+            renderMessages();
+
+            // Simulate mechanic response
+            setTimeout(() => {
+                const mecChats = getChats();
+                mecChats[activeChatMecId].push({
+                    sender: 'mechanic',
+                    text: "Understood, I am on my way to your location.",
+                    time: new Date().toLocaleTimeString()
+                });
+                localStorage.setItem('orvr_chats', JSON.stringify(mecChats));
+                renderMessages();
+            }, 1500);
+        }
+
+        // Feedback Modal
+        function openFeedbackModal(mecId) {
+            document.getElementById('feedbackMecId').value = mecId;
+            $('#feedbackModal').modal('show');
+        }
+
+        function submitFeedback(e) {
+            e.preventDefault();
+            const mecId = parseInt(document.getElementById('feedbackMecId').value);
+            const rating = parseInt(document.getElementById('feedbackRating').value);
+            const comment = document.getElementById('feedbackComment').value;
+
+            // Remove/complete request
+            let reqs = getRequests();
+            reqs = reqs.map(r => {
+                if (r.mechanicId === mecId) {
+                    r.status = 'completed';
+                }
+                return r;
+            });
+            saveRequests(reqs);
+
+            $('#feedbackModal').modal('hide');
+            alert("Feedback submitted successfully! Thank you for using ORVR.");
+            
+            if (activeChatMecId === mecId) {
+                document.getElementById('chatSection').classList.add('d-none');
+            }
+        }
+
+        // Init
+        filterMechanics();
+        renderRequests();
+        // Keep syncing state changes
+        window.addEventListener('storage', () => {
+            filterMechanics();
+            renderRequests();
+            renderMessages();
+        });
+    </script>
+</body>
+</html>
